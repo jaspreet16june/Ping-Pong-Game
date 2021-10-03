@@ -4,12 +4,16 @@ const context = canvas.getContext("2d");
 const width = 300;
 const height = 500;
 
-const slideWidth = 40;
-const slideHeight = 5;
-
 canvas.width = width;
 canvas.height = height
-
+const slite = {
+    w :40,
+    h:5,
+    x: 80,
+    speed: 10,
+    dx: 0,
+    size :9
+}
 
 const circle = {
     x: 200,
@@ -31,12 +35,34 @@ function drawRect(){
     context.fillRect(0,0,width,height)
 
     context.fillStyle = "white";
-    context.fillRect(130,10,slideWidth,slideHeight)
+    context.fillRect(slite.x-70,10,slite.w,slite.h)
 
     context.fillStyle = "white";
-    context.fillRect(130,490,slideWidth,slideHeight)
+    context.fillRect(slite.x-70,490,slite.w,slite.h)
 }
+function clear() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  }
+function newPos() {
+    slite.x += slite.dx;
+    slite.y += slite.dy;
 
+  detectWalls();
+}
+function detectWalls(){
+
+    if(slite.x + slite.size > canvas.width || slite.x - slite.size <0){
+        slite.dx *= -1;
+    }
+    // //left wall
+    // if(slite.x == canvas.height){
+    //     slite.x = 0;
+    // }
+     // Right Wall
+  if (slite.x + slite.w > canvas.width) {
+    slite.x = canvas.width - slite.w;
+  }
+}
 
 function drawSlits(){
     context.beginPath();
@@ -53,12 +79,14 @@ function drawCircle(){
     context.fill();
 }
 
+
 function update(){
-    context.clearRect(0,0,canvas.width,canvas.height);
+    clear()
     drawRect()
     drawSlits()
     score();
     drawCircle();
+    newPos();
 
     circle.x += circle.dx;
     circle.y += circle.dy;
@@ -75,4 +103,33 @@ function update(){
 
 }
 
-update();
+update()
+function moveRight() {
+    slite.dx = slite.speed;
+  }
+  
+  function moveLeft() {
+    slite.dx = -slite.speed;
+  }
+  
+  function keyDown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Right') {
+      moveRight();
+    } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+      moveLeft();
+    } 
+  }
+  
+  function keyUp(e) {
+    if (
+      e.key == 'Right' ||
+      e.key == 'ArrowRight' ||
+      e.key == 'Left' ||
+      e.key == 'ArrowLeft') {
+      slite.dx = 0;
+      slite.dy = 0;
+    }
+  }
+    
+  document.addEventListener('keydown', keyDown);
+  document.addEventListener('keyup', keyUp);
